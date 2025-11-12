@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Insurance Cost Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            padding: 45px;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 8px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .input-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 16px 50px;
+            border: 2px solid #e0e7ff;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 500;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42, 82, 152, 0.1);
+        }
+
+        .results {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+        }
+
+        .results-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-icon {
+            font-size: 1.2rem;
+        }
+
+        .result-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .maturity-highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+        }
+
+        .maturity-highlight .result-value {
+            font-size: 2.2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #10b981, #34d399);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.5s ease;
+            min-height: 20px;
+        }
+
+        .bar:first-child {
+            background: linear-gradient(to top, #3b82f6, #60a5fa);
+        }
+
+        .bar:nth-child(2) {
+            background: linear-gradient(to top, #8b5cf6, #a78bfa);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .info-box-title {
+            color: #92400e;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box-text {
+            color: #78350f;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-icon {
+                font-size: 2.5rem;
+            }
+
+            .input-section {
+                padding: 20px;
+            }
+
+            input[type="number"] {
+                padding: 14px 45px;
+                font-size: 1rem;
+            }
+
+            .result-value {
+                font-size: 1.3rem;
+            }
+
+            .maturity-highlight .result-value {
+                font-size: 1.8rem;
+            }
+
+            .chart-bars {
+                height: 120px;
+            }
+
+            .bar-label {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">🛡️</div>
+            <h1>Life Insurance Calculator</h1>
+            <p class="subtitle">Plan your financial security and growth</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="monthly">Monthly Contribution</label>
+                <div class="input-wrapper">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="monthly" min="0" step="0.01" value="500" placeholder="Enter amount">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="duration">Duration of Contribution</label>
+                <div class="input-wrapper">
+                    <input type="number" id="duration" min="1" value="20" placeholder="Enter years">
+                    <span class="input-suffix">years</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="interest">Annual Interest Rate</label>
+                <div class="input-wrapper">
+                    <input type="number" id="interest" min="0" max="100" step="0.1" value="5" placeholder="Enter rate">
+                    <span class="input-suffix">%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="results">
+            <div class="results-title">📊 Your Investment Summary</div>
+
+            <div class="result-item">
+                <span class="result-label">
+                    <span class="result-icon">💵</span>
+                    Total Contribution
+                </span>
+                <span class="result-value" id="totalContribution">$0.00</span>
+            </div>
+
+            <div class="result-item">
+                <span class="result-label">
+                    <span class="result-icon">📈</span>
+                    Interest Earned
+                </span>
+                <span class="result-value" id="interestEarned">$0.00</span>
+            </div>
+
+            <div class="result-item">
+                <span class="result-label">
+                    <span class="result-icon">💰</span>
+                    Total Premium
+                </span>
+                <span class="result-value" id="totalPremium">$0.00</span>
+            </div>
+
+            <div class="result-item maturity-highlight">
+                <span class="result-label">
+                    <span class="result-icon">✨</span>
+                    Maturity Sum
+                </span>
+                <span class="result-value" id="maturitySum">$0.00</span>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-bars">
+                    <div class="bar" id="contributionBar">
+                        <span class="bar-label">Contribution</span>
+                    </div>
+                    <div class="bar" id="interestBar">
+                        <span class="bar-label">Interest</span>
+                    </div>
+                    <div class="bar" id="maturityBar">
+                        <span class="bar-label">Maturity</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">
+                <span>💡</span>
+                <span>How It Works</span>
+            </div>
+            <div class="info-box-text">
+                This calculator uses compound interest formula to project your insurance policy's growth. Your monthly contributions accumulate with interest, building toward your maturity sum over time.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const monthlyInput = document.getElementById('monthly');
+        const durationInput = document.getElementById('duration');
+        const interestInput = document.getElementById('interest');
+        const totalContributionEl = document.getElementById('totalContribution');
+        const interestEarnedEl = document.getElementById('interestEarned');
+        const totalPremiumEl = document.getElementById('totalPremium');
+        const maturitySumEl = document.getElementById('maturitySum');
+        const contributionBar = document.getElementById('contributionBar');
+        const interestBar = document.getElementById('interestBar');
+        const maturityBar = document.getElementById('maturityBar');
+
+        function formatCurrency(value) {
+            return '$' + value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function calculateInsurance() {
+            const monthly = parseFloat(monthlyInput.value) || 0;
+            const years = parseFloat(durationInput.value) || 0;
+            const annualRate = parseFloat(interestInput.value) || 0;
+
+            const monthlyRate = annualRate / 100 / 12;
+            const months = years * 12;
+
+            const totalContribution = monthly * months;
+
+            let maturitySum = 0;
+            if (monthlyRate > 0) {
+                maturitySum = monthly * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate);
+            } else {
+                maturitySum = totalContribution;
+            }
+
+            const interestEarned = maturitySum - totalContribution;
+            const totalPremium = totalContribution;
+
+            totalContributionEl.textContent = formatCurrency(totalContribution);
+            interestEarnedEl.textContent = formatCurrency(interestEarned);
+            totalPremiumEl.textContent = formatCurrency(totalPremium);
+            maturitySumEl.textContent = formatCurrency(maturitySum);
+
+            updateChart(totalContribution, interestEarned, maturitySum);
+        }
+
+        function updateChart(contribution, interest, maturity) {
+            const maxValue = Math.max(contribution, interest, maturity);
+            
+            if (maxValue > 0) {
+                const contributionHeight = (contribution / maxValue) * 100;
+                const interestHeight = (interest / maxValue) * 100;
+                const maturityHeight = (maturity / maxValue) * 100;
+
+                contributionBar.style.height = contributionHeight + '%';
+                interestBar.style.height = interestHeight + '%';
+                maturityBar.style.height = maturityHeight + '%';
+            } else {
+                contributionBar.style.height = '20px';
+                interestBar.style.height = '20px';
+                maturityBar.style.height = '20px';
+            }
+        }
+
+        monthlyInput.addEventListener('input', calculateInsurance);
+        durationInput.addEventListener('input', calculateInsurance);
+        interestInput.addEventListener('input', calculateInsurance);
+
+        calculateInsurance();
+    </script>
+</body>
+</html>
